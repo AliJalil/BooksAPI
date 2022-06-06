@@ -3,7 +3,7 @@ using BooksApi.Models;
 
 namespace BooksAPI.Models.Dtos.UserDtos
 {
-    public class UserDto
+    public class UserUpdateDto
     {
         public int UserId { get; set; }
         public string Name { get; set; }
@@ -12,8 +12,6 @@ namespace BooksAPI.Models.Dtos.UserDtos
         public string Role { get; set; }
 
         [Required] public int DepId { get; set; }
-
-        public Department Department { get; set; }
-        public string Token { get; set; }
+        
     }
 }

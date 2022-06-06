@@ -3,23 +3,23 @@ using BooksApi.Models;
 
 namespace BooksApi.Repository.IRepository
 {
-    public interface IDepartmentRepository
+    public interface IUserRepository
     {
-        ICollection<Department> GetDepartments();
+        ICollection<User> GetUsers();
 
 
-        Department GetDepartment(int depId);
+        User GetUser(int depId);
 
 
-        bool DepartmentExist(int departmentId);
+        bool UserExist(int userId);
 
-        bool DepartmentExist(string name);
+        bool UserExist(string name);
 
-        bool CreateDepartment(Department department);
+        bool CreateUser(User user);
 
-        bool UpdateDepartment(Department department);
+        bool UpdateUser(User user);
 
-        bool DeleteDepartment(Department department);
+        bool DeleteUser(User user);
 
         bool Save();
 

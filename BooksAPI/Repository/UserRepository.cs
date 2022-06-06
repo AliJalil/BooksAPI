@@ -7,46 +7,46 @@ using BooksApi.Repository.IRepository;
 
 namespace BooksApi.Repository
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _db;
 
-        public DepartmentRepository(ApplicationDbContext db)
+        public UserRepository(ApplicationDbContext db)
         {
             _db = db;
         }
 
        
-        public bool CreateDepartment(Department nationalPark)
+        public bool CreateUser(User nationalPark)
         {
-            _db.Departments.Add(nationalPark);
+            _db.Users.Add(nationalPark);
             return Save();
         }
 
-        public bool DeleteDepartment(Department nationalPark)
+        public bool DeleteUser(User nationalPark)
         {
-            _db.Departments.Remove(nationalPark);
+            _db.Users.Remove(nationalPark);
             return Save();
         }
 
-        public Department GetDepartment(int departmentId)
+        public User GetUser(int userId)
         {
-            return _db.Departments.FirstOrDefault(a => a.DepId == departmentId);
+            return _db.Users.FirstOrDefault(a => a.UserId == userId);
         }
 
-        public bool DepartmentExist(int departmentId)
+        public bool UserExist(int userId)
         {
-            return _db.Departments.Any(a => a.DepId == departmentId);
+            return _db.Users.Any(a => a.UserId == userId);
         }
 
-        public ICollection<Department> GetDepartments()
+        public ICollection<User> GetUsers()
         {
-            return _db.Departments.OrderBy(a => a.NameAr).ToList();
+            return _db.Users.OrderBy(a => a.Name).ToList();
         }
 
-        public bool DepartmentExist(string name)
+        public bool UserExist(string userName)
         {
-            bool value = _db.Departments.Any(a => a.NameAr == name);
+            bool value = _db.Users.Any(a => a.Username == userName);
             return value;
         }
         
@@ -55,9 +55,9 @@ namespace BooksApi.Repository
             return _db.SaveChanges() >= 0 ? true : false;
         }
 
-        public bool UpdateDepartment(Department nationalPark)
+        public bool UpdateUser(User nationalPark)
         {
-            _db.Departments.Update(nationalPark);
+            _db.Users.Update(nationalPark);
             return Save();
         }
     }

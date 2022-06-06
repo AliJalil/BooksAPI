@@ -3,6 +3,7 @@ using System.Linq;
 using AutoMapper;
 using BooksApi.Models;
 using BooksApi.Models.Dtos;
+using BooksAPI.Models.Dtos.UserDtos;
 using BooksApi.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,51 +13,51 @@ namespace BooksApi.Controllers
 
 {
     [Route("api/[controller]")]
-    public class DepartmentsController : Controller
+    public class UsersController : Controller
     {
-        private IDepartmentRepository _depRepo;
+        private IUserRepository _userRepo;
         private readonly IMapper _mapper;
 
-        public DepartmentsController(IDepartmentRepository depRepo, IMapper mapper)
+        public UsersController(IUserRepository userRepo, IMapper mapper)
         {
-            _depRepo = depRepo;
+            _userRepo = userRepo;
             _mapper = mapper;
         }
 
 
         /// <summary>
-        /// Get list of departments.
+        /// Get list of users.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<DepartmentDto>))]
-        public IActionResult GetDepartments()
+        [ProducesResponseType(200, Type = typeof(List<UserDto>))]
+        public IActionResult GetUsers()
         {
-            var objDto = _depRepo.GetDepartments().Select(obj => _mapper.Map<DepartmentDto>(obj)).ToList();
+            var objDto = _userRepo.GetUsers().Select(obj => _mapper.Map<UserDto>(obj)).ToList();
 
             return Ok(objDto);
         }
 
 
         /// <summary>
-        /// Get individual departments
+        /// Get individual users
         /// </summary>
-        /// <param name="departmentId"> The Id of the department </param>
+        /// <param name="userId"> The Id of the user </param>
         /// <returns></returns>
-        [HttpGet("{departmentId:int}", Name = "GetDepartment")]
-        [ProducesResponseType(200, Type = typeof(DepartmentDto))]
+        [HttpGet("{userId:int}", Name = "GetUser")]
+        [ProducesResponseType(200, Type = typeof(UserDto))]
         [ProducesResponseType(404)]
         [Authorize]
         [ProducesDefaultResponseType]
-        public IActionResult GetDepartment(int departmentId)
+        public IActionResult GetUser(int userId)
         {
-            var obj = _depRepo.GetDepartment(departmentId);
+            var obj = _userRepo.GetUser(userId);
             if (obj == null)
             {
                 return NotFound();
             }
 
-            var objDto = _mapper.Map<DepartmentDto>(obj);
+            var objDto = _mapper.Map<UserDto>(obj);
             //var objDto = new NationalParkDto()
             //{
             //    Created = obj.Created,
@@ -68,67 +69,67 @@ namespace BooksApi.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(DepartmentDto))]
+        [ProducesResponseType(201, Type = typeof(UserDto))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult CreateNationalPark([FromBody] DepartmentDto departmentDto)
+        public IActionResult CreateNationalPark([FromBody] UserCreateDto userDto)
         {
-            if (departmentDto == null)
+            if (userDto == null)
             {
                 return BadRequest(ModelState);
             }
 
-            if (_depRepo.DepartmentExist(departmentDto.NameAr))
+            if (_userRepo.UserExist(userDto.Username))
             {
-                ModelState.AddModelError("", "Department Exists!");
+                ModelState.AddModelError("", "User Exists!");
                 return StatusCode(404, ModelState);
             }
 
-            var departmentObj = _mapper.Map<Department>(departmentDto);
-            if (_depRepo.CreateDepartment(departmentObj))
-                return CreatedAtAction(nameof(GetDepartment), new { departmentId = departmentObj.DepId },
-                    departmentObj);
-            ModelState.AddModelError("", $"Something went wrong when saving the record {departmentDto.NameAr}");
+            var userObj = _mapper.Map<User>(userDto);
+            if (_userRepo.CreateUser(userObj))
+                return CreatedAtAction(nameof(GetUser), new { userId = userObj.UserId },
+                    userObj);
+            ModelState.AddModelError("", $"Something went wrong when saving the record {userDto.Name}");
             return StatusCode(500, ModelState);
 
         }
 
 
-        [HttpPatch("{departmentId:int}", Name = "UpdateDepartment")]
+        [HttpPatch("{userId:int}", Name = "UpdateUser")]
         [ProducesResponseType(204)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult UpdateDepartment(int departmentId, [FromBody] DepartmentDto departmentDto)
+        public IActionResult UpdateUser(int userId, [FromBody] UserUpdateDto userDto)
         {
-            if (departmentDto == null || departmentId != departmentDto.DepId)
+            if (userDto == null || userId != userDto.DepId)
             {
                 return BadRequest(ModelState);
             }
 
-            var departmentObj = _mapper.Map<Department>(departmentDto);
-            if (_depRepo.UpdateDepartment(departmentObj)) return NoContent();
-            ModelState.AddModelError("", $"Something went wrong when updating the record {departmentObj.NameAr}");
+            var userObj = _mapper.Map<User>(userDto);
+            if (_userRepo.UpdateUser(userObj)) return NoContent();
+            ModelState.AddModelError("", $"Something went wrong when updating the record {userObj.Name}");
             return StatusCode(500, ModelState);
 
         }
         
         
-        [HttpDelete("{departmentId:int}", Name = "DeleteDepartment")]
+        [HttpDelete("{userId:int}", Name = "DeleteUser")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult DeleteDepartment(int departmentId)
+        public IActionResult DeleteUser(int userId)
         {
-            if (!_depRepo.DepartmentExist(departmentId))
+            if (!_userRepo.UserExist(userId))
             {
                 return NotFound();
             }
 
-            var departmentObj = _depRepo.GetDepartment(departmentId);
-            if (_depRepo.DeleteDepartment(departmentObj)) return NoContent();
-            ModelState.AddModelError("", $"Something went wrong when deleting the record {departmentObj.NameAr}");
+            var userObj = _userRepo.GetUser(userId);
+            if (_userRepo.DeleteUser(userObj)) return NoContent();
+            ModelState.AddModelError("", $"Something went wrong when deleting the record {userObj.Name}");
             return StatusCode(500, ModelState);
 
         }
